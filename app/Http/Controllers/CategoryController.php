@@ -36,7 +36,7 @@ class CategoryController extends Controller
         return Response::json([
             'InsertID'=>$Category->id,
             'Success'=>True
-        ]);
+        ], 201);
     }
 
     /**
@@ -56,7 +56,7 @@ class CategoryController extends Controller
                 'Data'=>$Category,
                 'Success'=>False,
                 'Message'=>'Category not found'
-            ]);
+            ], 404);
             
         }
     }
@@ -86,7 +86,7 @@ class CategoryController extends Controller
                 'Data'=>$Category,
                 'Success'=>False,
                 'Message'=>'Category not found'
-            ]);
+            ], 404);
 
         }
         
@@ -109,7 +109,7 @@ class CategoryController extends Controller
             return Response::json([
                 'Message'=>'Deleted Failed',
                 'Success'=> False
-            ]);
+            ], 400);
         }
     }
 }

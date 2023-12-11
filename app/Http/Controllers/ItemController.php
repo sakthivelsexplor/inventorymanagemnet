@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Response;
 use App\Models\Item;
 use App\Models\ItemCategory;
 use App\Http\Requests\ItemRequest;
+use App\Mail\SendMails;
+use Illuminate\Support\Facades\Mail;
 
 
 class ItemController extends Controller
@@ -54,6 +56,9 @@ class ItemController extends Controller
             ItemCategory::insert($CategoryIdsArr);
         }
 
+        $Tomail = env('ADMIN_EMAIL');
+        Mail::to($Tomail)->send(new SendMails($Item));
+
         return Response::json([
             'InsertID'=>$Item->id,
             'Success'=>True
@@ -93,7 +98,7 @@ class ItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ItemRequest $request, $id)
     {
         $Item = Item::find($id);
         if($Item){
@@ -109,11 +114,11 @@ class ItemController extends Controller
                 $CategoryIdsArr[]=[
                     'ItemID'=>$Item->id,
                     'CategoryID'=>$category
-
                 ] ;
             }
 
             if(sizeof($CategoryIdsArr)){
+                ItemCategory::where('ItemID', $Item->id)->delete();
                 ItemCategory::insert($CategoryIdsArr);
             }
 
