@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use App\Models\Item;
+use App\Models\ItemCategory;
+use App\Http\Requests\ItemRequest;
+
 
 class ItemController extends Controller
 {
@@ -13,17 +18,11 @@ class ItemController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $Items= Item::with(['category.details'])->get();
+        return Response::json([
+            'Data'=>$Items,
+            'Success'=>True
+        ]);
     }
 
     /**
@@ -32,9 +31,33 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ItemRequest $request)
     {
-        //
+        $Item = new Item;
+        $Item->Name =  $request->Name;
+        $Item->Description =$request->Description;
+        $Item->Price =$request->Price;
+        $Item->Quantity =$request->Quantity;
+        $Item->save();
+
+        $CategoryIdsArr =[];
+        $Categories = $request->CategoryID;
+        foreach($Categories as $category){
+            $CategoryIdsArr[]=[
+                'ItemID'=>$Item->id,
+                'CategoryID'=>$category
+
+            ] ;
+        }
+
+        if(sizeof($CategoryIdsArr)){
+            ItemCategory::insert($CategoryIdsArr);
+        }
+
+        return Response::json([
+            'InsertID'=>$Item->id,
+            'Success'=>True
+        ]);
     }
 
     /**
@@ -45,20 +68,24 @@ class ItemController extends Controller
      */
     public function show($id)
     {
-        //
+        $Item = Item::with('category.details')->find($id);
+        if($Item){
+            return Response::json([
+                'Data'=>$Item,
+                'Success'=>True
+            ]);
+
+        }else{
+            return Response::json([
+                'Data'=>$Item,
+                'Success'=>False,
+                'Message'=>'Item not found'
+            ]);
+            
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
+    
     /**
      * Update the specified resource in storage.
      *
@@ -68,7 +95,44 @@ class ItemController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $Item = Item::find($id);
+        if($Item){
+            $Item->Name =  $request->Name;
+            $Item->Description =$request->Description;
+            $Item->Price =$request->Price;
+            $Item->Quantity =$request->Quantity;
+            $Item->save();
+
+            $CategoryIdsArr =[];
+            $Categories = $request->CategoryID;
+            foreach($Categories as $category){
+                $CategoryIdsArr[]=[
+                    'ItemID'=>$Item->id,
+                    'CategoryID'=>$category
+
+                ] ;
+            }
+
+            if(sizeof($CategoryIdsArr)){
+                ItemCategory::insert($CategoryIdsArr);
+            }
+
+
+            return Response::json([
+                'UpdateID'=>$Item->id,
+                'Success'=>True,
+                'Message'=>'Updated successfully'
+            ]);
+
+        }else{
+
+            return Response::json([
+                'Data'=>$Item,
+                'Success'=>False,
+                'Message'=>'Updated failed'
+            ]);
+
+        }
     }
 
     /**
@@ -79,6 +143,19 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $Item = Item::find($id);
+        if($Item){
+            $Item->delete();
+            return Response::json([
+                'Message'=>'Deleted successfully',
+                'Success'=>True
+            ]);
+
+        }else{
+            return Response::json([
+                'Message'=>'Deleted Failed',
+                'Success'=> False
+            ]);
+        }
     }
 }
