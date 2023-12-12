@@ -16,12 +16,12 @@ class ItemUnitTest extends TestCase
      * @return void
      */
 
-     private $API_HEADERS = [
+    private $API_HEADERS = [
         'Authorization' => 'Bearer explorinventory',
         'Accept' => 'application/json'
     ];
 
-    
+
 
     public function testItemList()
     {
@@ -62,19 +62,19 @@ class ItemUnitTest extends TestCase
     {
         $response = $this->withHeaders($this->API_HEADERS)
             ->put('/api/items/800000', [
-            'Name' => 'Test category - ' . uniqid(),
-            'Description' => 'Test description updated',
-            'Price' => 200.00,
-            'Quantity' => 50,
-            'CategoryID' => [1]
-        ]);
+                'Name' => 'Test category - ' . uniqid(),
+                'Description' => 'Test description updated',
+                'Price' => 200.00,
+                'Quantity' => 50,
+                'CategoryID' => [1]
+            ]);
         $response->assertStatus(404);
     }
 
     public function testGetItemDetails()
     {
         $Item = Item::orderBy('id', 'DESC')->first();
-        $response = $this->withHeaders($this->API_HEADERS)->getJson('/api/items/'.$Item->id);
+        $response = $this->withHeaders($this->API_HEADERS)->getJson('/api/items/' . $Item->id);
         $response->assertStatus(200);
     }
 
@@ -92,6 +92,4 @@ class ItemUnitTest extends TestCase
             ->delete('/api/items/' . $Item->id);
         $response->assertStatus(200);
     }
-
-
 }
