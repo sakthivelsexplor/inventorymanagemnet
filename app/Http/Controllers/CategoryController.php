@@ -16,10 +16,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $Categories= Category::get();
+        $Categories = Category::get();
         return Response::json([
-            'Data'=>$Categories,
-            'Success'=>True
+            'Data' => $Categories,
+            'Success' => True
         ]);
     }
 
@@ -30,12 +30,12 @@ class CategoryController extends Controller
     {
         $Category = new Category;
         $Category->Name =  $request->Name;
-        $Category->Description =$request->Description;
+        $Category->Description = $request->Description;
         $Category->save();
 
         return Response::json([
-            'InsertID'=>$Category->id,
-            'Success'=>True
+            'InsertID' => $Category->id,
+            'Success' => True
         ], 201);
     }
 
@@ -45,23 +45,21 @@ class CategoryController extends Controller
     public function show($id)
     {
         $Category = Category::find($id);
-        if($Category){
+        if ($Category) {
             return Response::json([
-                'Data'=>$Category,
-                'Success'=>True
+                'Data' => $Category,
+                'Success' => True
             ]);
-
-        }else{
+        } else {
             return Response::json([
-                'Data'=>$Category,
-                'Success'=>False,
-                'Message'=>'Category not found'
+                'Data' => $Category,
+                'Success' => False,
+                'Message' => 'Category not found'
             ], 404);
-            
         }
     }
 
-   
+
 
     /**
      * Update the specified resource in storage.
@@ -70,26 +68,23 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request, $id)
     {
         $Category = Category::find($id);
-        if($Category){
+        if ($Category) {
             $Category->Name =  $request->Name;
-            $Category->Description =$request->Description;
+            $Category->Description = $request->Description;
             $Category->save();
 
             return Response::json([
-                'UpdateID'=>$Category->id,
-                'Success'=>True
+                'UpdateID' => $Category->id,
+                'Success' => True
             ]);
-
-        }else{
+        } else {
 
             return Response::json([
-                'Data'=>$Category,
-                'Success'=>False,
-                'Message'=>'Category not found'
+                'Data' => $Category,
+                'Success' => False,
+                'Message' => 'Category not found'
             ], 404);
-
         }
-        
     }
 
     /**
@@ -98,17 +93,16 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $Category = Category::find($id);
-        if($Category){
+        if ($Category) {
             $Category->delete();
             return Response::json([
-                'Message'=>'Deleted successfully',
-                'Success'=>True
+                'Message' => 'Deleted successfully',
+                'Success' => True
             ]);
-
-        }else{
+        } else {
             return Response::json([
-                'Message'=>'Deleted Failed',
-                'Success'=> False
+                'Message' => 'Deleted Failed',
+                'Success' => False
             ], 400);
         }
     }

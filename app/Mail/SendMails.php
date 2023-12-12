@@ -21,7 +21,6 @@ class SendMails extends Mailable
      */
     public function __construct(public Item $item)
     {
-        
     }
 
     /**
@@ -31,8 +30,16 @@ class SendMails extends Mailable
      */
     public function envelope()
     {
+
+        if ($this->item->IsType == 'Create') {
+            $subject = "New Item Created";
+        } elseif ($this->item->IsType == 'Update') {
+            $subject = "Item " . $this->item->Name . " Was Upadted";
+        } else {
+            $subject = "Item " . $this->item->Name . " Was Deleted";
+        }
         return new Envelope(
-            subject: 'Mail Notification For Items',
+            subject: $subject,
         );
     }
 

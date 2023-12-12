@@ -20,10 +20,10 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $Items= Item::with(['category.details'])->get();
+        $Items = Item::with(['category.details'])->get();
         return Response::json([
-            'Data'=>$Items,
-            'Success'=>True
+            'Data' => $Items,
+            'Success' => True
         ]);
     }
 
@@ -37,31 +37,32 @@ class ItemController extends Controller
     {
         $Item = new Item;
         $Item->Name =  $request->Name;
-        $Item->Description =$request->Description;
-        $Item->Price =$request->Price;
-        $Item->Quantity =$request->Quantity;
+        $Item->Description = $request->Description;
+        $Item->Price = $request->Price;
+        $Item->Quantity = $request->Quantity;
         $Item->save();
 
-        $CategoryIdsArr =[];
+        $CategoryIdsArr = [];
         $Categories = $request->CategoryID;
-        foreach($Categories as $category){
-            $CategoryIdsArr[]=[
-                'ItemID'=>$Item->id,
-                'CategoryID'=>$category
+        foreach ($Categories as $category) {
+            $CategoryIdsArr[] = [
+                'ItemID' => $Item->id,
+                'CategoryID' => $category
 
-            ] ;
+            ];
         }
 
-        if(sizeof($CategoryIdsArr)){
+        if (sizeof($CategoryIdsArr)) {
             ItemCategory::insert($CategoryIdsArr);
         }
-
+        $Item->IsType='Create';
         $Tomail = env('ADMIN_EMAIL');
-        Mail::to($Tomail)->send(new SendMails($Item));
+        $CcMails =explode(',',env('XPLOR_TEAM_EMAIL'));
+        Mail::to($Tomail)->cc($CcMails)->send(new SendMails($Item));
 
         return Response::json([
-            'InsertID'=>$Item->id,
-            'Success'=>True
+            'InsertID' => $Item->id,
+            'Success' => True
         ]);
     }
 
@@ -74,23 +75,21 @@ class ItemController extends Controller
     public function show($id)
     {
         $Item = Item::with('category.details')->find($id);
-        if($Item){
+        if ($Item) {
             return Response::json([
-                'Data'=>$Item,
-                'Success'=>True
+                'Data' => $Item,
+                'Success' => True
             ]);
-
-        }else{
+        } else {
             return Response::json([
-                'Data'=>$Item,
-                'Success'=>False,
-                'Message'=>'Item not found'
+                'Data' => $Item,
+                'Success' => False,
+                'Message' => 'Item not found'
             ]);
-            
         }
     }
 
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -101,42 +100,45 @@ class ItemController extends Controller
     public function update(ItemRequest $request, $id)
     {
         $Item = Item::find($id);
-        if($Item){
+        if ($Item) {
             $Item->Name =  $request->Name;
-            $Item->Description =$request->Description;
-            $Item->Price =$request->Price;
-            $Item->Quantity =$request->Quantity;
+            $Item->Description = $request->Description;
+            $Item->Price = $request->Price;
+            $Item->Quantity = $request->Quantity;
             $Item->save();
 
-            $CategoryIdsArr =[];
+            $CategoryIdsArr = [];
             $Categories = $request->CategoryID;
-            foreach($Categories as $category){
-                $CategoryIdsArr[]=[
-                    'ItemID'=>$Item->id,
-                    'CategoryID'=>$category
-                ] ;
+            foreach ($Categories as $category) {
+                $CategoryIdsArr[] = [
+                    'ItemID' => $Item->id,
+                    'CategoryID' => $category
+                ];
             }
 
-            if(sizeof($CategoryIdsArr)){
+            if (sizeof($CategoryIdsArr)) {
                 ItemCategory::where('ItemID', $Item->id)->delete();
                 ItemCategory::insert($CategoryIdsArr);
             }
 
+        $Item->IsType='Update';
+        $Tomail = env('ADMIN_EMAIL');
+        $CcMails =explode(',',env('XPLOR_TEAM_EMAIL'));
+        Mail::to($Tomail)->cc($CcMails)->send(new SendMails($Item));
+
 
             return Response::json([
-                'UpdateID'=>$Item->id,
-                'Success'=>True,
-                'Message'=>'Updated successfully'
+                'UpdateID' => $Item->id,
+                'Success' => True,
+                'Message' => 'Updated successfully'
             ]);
-
-        }else{
+        } else {
 
             return Response::json([
-                'Data'=>$Item,
-                'Success'=>False,
-                'Message'=>'Updated failed'
+                'Data' => $Item,
+                'Success' => False,
+                'Message' => 'Updated failed'
             ]);
-
         }
     }
 
@@ -148,18 +150,24 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        $Item = Item::find($id);
-        if($Item){
-            $Item->delete();
-            return Response::json([
-                'Message'=>'Deleted successfully',
-                'Success'=>True
-            ]);
+        $Items = Item::find($id);
+        if ($Items) {
+            $Item=$Items;
+            $Items->delete();
 
-        }else{
+            $Item->IsType='Delete';
+            $Tomail = env('ADMIN_EMAIL');
+            $CcMails =explode(',',env('XPLOR_TEAM_EMAIL'));
+            Mail::to($Tomail)->cc($CcMails)->send(new SendMails($Item));
+
             return Response::json([
-                'Message'=>'Deleted Failed',
-                'Success'=> False
+                'Message' => 'Deleted successfully',
+                'Success' => True
+            ]);
+        } else {
+            return Response::json([
+                'Message' => 'Deleted Failed',
+                'Success' => False
             ]);
         }
     }
