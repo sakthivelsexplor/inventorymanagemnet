@@ -63,7 +63,7 @@ class ItemController extends Controller
         return Response::json([
             'InsertID' => $Item->id,
             'Success' => True
-        ]);
+        ], 201);
     }
 
     /**
@@ -137,8 +137,8 @@ class ItemController extends Controller
             return Response::json([
                 'Data' => $Item,
                 'Success' => False,
-                'Message' => 'Updated failed'
-            ]);
+                'Message' => 'Item not found'
+            ], 404);
         }
     }
 
@@ -166,9 +166,9 @@ class ItemController extends Controller
             ]);
         } else {
             return Response::json([
-                'Message' => 'Deleted Failed',
+                'Message' => 'Item not found',
                 'Success' => False
-            ]);
+            ], 400);
         }
     }
 }

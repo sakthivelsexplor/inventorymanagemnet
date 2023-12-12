@@ -9,9 +9,7 @@ use App\Models\Category;
 
 class CategoryUnitTest extends TestCase
 {
-    private $API_VALID_TOKEN = 'explorinventory';
-
-
+    
     public function testApiTokenisvalidMiddleware()
     {
         $response = $this->postJson('/api/categories', [
