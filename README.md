@@ -8,7 +8,7 @@ with categories and update these associations.
     -> Dpendencies
     -> Installation
     -> Features
-    -> Contributing
+    -> Executing program
     
 ## Dpendencies
     1. php >=8.0
