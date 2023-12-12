@@ -24,6 +24,9 @@ with categories and update these associations.
 	> Item Managemnet
     > Category Management
     > Email Notification
+    > API request validation
+    > Php unit test cases wriiten
+    > Authroized by predefined Token
     
 ## Executing program
    1. Create a .env file in project roor folder.
@@ -44,8 +47,15 @@ with categories and update these associations.
 
    9. You can access the application for base url ex:http://127.0.0.1:8000
 
-## License
+## Inventory Management APIs Refereence
+## Authorization
+  > Authorization Token add Bearer toekn(INV_API_TOKEN)  is required.
+  > Request Header Type Accept and application/json is required.
+  > Glist API returns a JSON response for [API REFERENCE (1).docx](https://github.com/sakthivelsexplor/inventorymanagemnet/files/13646407/API.REFERENCE.1.docx)
+attached file kindly look at this.
    
+
+
 ## Releases
     No releases published
 ## Packages
